@@ -18,14 +18,17 @@ export const useSocket = () => {
 };
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const [socket, setSocket] = useState<any | null>(null);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketInstance = ClientIO({
-      path: "/api/socket/io",
-      transports: ["websocket"],
-    });
+    const socketInstance = new (ClientIO as any)(
+      process.env.NEXT_PUBLIC_SITE_URL!,
+      {
+        path: "/api/socket/io",
+        addTrailingSlash: false,
+      }
+    );
 
     socketInstance.on("connect", () => {
       setIsConnected(true);
